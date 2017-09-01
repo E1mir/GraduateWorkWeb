@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.min.css") }}">
+    <!-- Custom styles CSS-->
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/styles.css") }}">
+    <!-- Additional header for inherited templates -->
+    {% block additional_header %}{% endblock %}
+</head>
+<body>
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="{{ url_for("index") }}">WMS</a>
+    <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
+            data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+<main role="main">
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
+<!-- Additional scripts for inherited templates -->
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
