@@ -22,4 +22,9 @@ class UserController(Controller):
         super(UserController, self).__init__(request)
 
     def index(self):
-        return render_template("pages/home.html")
+        return render_template(
+            "pages/home.html",
+            site={
+                "title": "Warehouse Management System"
+            }
+        )
