@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, flash
 from settings import DEBUG
 from controllers import UserController, StaticPageController, ServiceController
 

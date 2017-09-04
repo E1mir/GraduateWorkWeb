@@ -1,4 +1,4 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, flash
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
@@ -55,18 +55,16 @@ class ServiceController(Controller):
 
     def get_form_data(self):
         form_data = {
-            "me": "kryternext@gmail.com"
+            "me": "elmir_ide@mail.ru"
         }
-        if self.request.method == "POST":
-            if "userName" in self.request.form:
-                form_data["user_name"] = self.request.form["userName"]
-            if "userEmail" in self.request.form:
-                form_data["sender"] = self.request.form["userEmail"]
-            if "userMessage" in self.request.form:
-                form_data["message"] = self.request.form["userMessage"]
-            if "userSubject" in self.request.form:
-                form_data["subject"] = self.request.form["subject"]
-
+        if "userName" in self.request.form:
+            form_data["user_name"] = self.request.form["userName"]
+        if "userEmail" in self.request.form:
+            form_data["sender"] = self.request.form["userEmail"]
+        if "userMessage" in self.request.form:
+            form_data["message"] = self.request.form["userMessage"]
+        if "userSubject" in self.request.form:
+            form_data["subject"] = self.request.form["userSubject"]
         return form_data
 
     def send_feedback(self):
@@ -74,16 +72,38 @@ class ServiceController(Controller):
         # the text file contains only ASCII characters.
         message_data = self.get_form_data()
         # Create a text/plain message
-        # msg = MIMEText(message_data["message"])
+        msg = MIMEText(message_data["message"])
         # me == the sender's email address
         # you == the recipient's email address
-        # msg['Subject'] = message_data["subject"]
-        # msg['From'] = message_data["sender"]
-        # msg['To'] = message_data["me"]
-
+        msg['Subject'] = message_data["subject"]
+        msg['From'] = message_data["sender"]
+        msg['To'] = message_data["me"]
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
-        # s = smtplib.SMTP('localhost')
-        # s.sendmail(message_data["me"], message_data["sender"], msg.as_string())
-        # s.quit()
-        return redirect("/home")
+        try:
+            message = "Name: {}\n" \
+                      "Email: {}\n" \
+                      "Subject: {}\n" \
+                      "Message: \n{}"
+            message.format(
+                message_data["name"],
+                message_data["sender"],
+                message_data["subject"],
+                message_data["message"]
+            )
+            s = smtplib.SMTP('smtp.mail.ru', 465)
+            s.starttls()
+            s.login("elmir_ide@mail.ru", "MAILRUqwedsazxc1997")
+            s.sendmail(message_data["sender"], message_data["me"], message)
+            s.quit()
+            sending = "success"
+        except:
+            sending = "error"
+
+        return render_template(
+            "pages/feedback.html",
+            site={
+                "title": "Contact"
+            },
+            message=sending
+        )
