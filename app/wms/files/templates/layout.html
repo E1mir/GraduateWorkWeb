@@ -26,7 +26,19 @@
     </button>
 </nav>
 <main role="main">
-    <div class="container-fluid">
+    <div id="mySidenav" class="sidenav">
+        <a href="#">Accounts</a>
+        <a href="#">Warehouse</a>
+        <a href="#">Orders</a>
+        <a href="{{ url_for("contact") }}">Contact</a>
+    </div>
+    <!-- Use any element to open the sidenav -->
+    <div class="container-fluid" id="main">
+        <div class="menu_button" onclick="toggleNav(this)">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
         {% block content %}
         {% endblock %}
     </div>
@@ -36,6 +48,20 @@
 <script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
+<script>
+    var count = 0;
+    function toggleNav(button) {
+        if (count % 2 == 0) {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("main").style.marginLeft = "250px";
+        } else {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+        count++;
+        button.classList.toggle("change");
+    }
+</script>
 <!-- Additional scripts for inherited templates -->
 {% block scripts %}
 {% endblock %}

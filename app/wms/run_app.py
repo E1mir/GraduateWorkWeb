@@ -1,6 +1,6 @@
 from flask import Flask, redirect, request
 from settings import DEBUG
-from controllers import UserController
+from controllers import UserController, StaticPageController, ServiceController
 
 app = Flask(__name__)
 app.secret_key = 'ThisIsMyGraduationWork:"WarehouseManagementSystem"'
@@ -19,6 +19,18 @@ def index():
 def home():
     controller = UserController(request)
     return controller.index()
+
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    controller = StaticPageController(request)
+    return controller.contact()
+
+
+@app.route("/send", methods=["GET", "POST"])
+def send_feedback():
+    controller = ServiceController(request)
+    return controller.send_feedback()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block additional_header %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/sweetalert.css") }}">
+{% endblock %}
+{% block content %}
+    <h1>Contact</h1>
+    <div class="row">
+        <div class="col-5">
+            <form>
+                <div class="form-group">
+                    <label for="userName" class="sr-only">Name</label>
+                    <input type="text" class="form-control" id="userName" name="userName" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="userEmail" class="sr-only">Email address</label>
+                    <input type="email" class="form-control" id="userEmail" name="userEmail"
+                           placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <label for="userSubject" class="sr-only">Subject</label>
+                    <input type="text" class="form-control" id="userSubject" name="userSubject" placeholder="Subject">
+                </div>
+                <div class="form-group">
+                    <label for="userMessage" class="sr-only">Your Message</label>
+                    <textarea class="form-control" id="userMessage" rows="5" name="userMessage"
+                              placeholder="Your message"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="sendMessage">Submit</button>
+                    <button type="reset" class="btn btn-danger">Reset</button>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-7">
+            <img src="{{ url_for("static",filename="img/contact-us-icon.jpg") }}" class="img-fluid">
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+    <script>
+
+        $("#sendMessage").on("click", function () {
+            var sendingObject = {};
+            var username = $("#userName").val().trim();
+            var email = $("#userEmail").val().trim();
+            var subject = $("#userSubject").val().trim();
+            var message = $("#userMessage").val().trim();
+            if (username != "") {
+                sendingObject["userName"] = username;
+            }
+            if (email != "") {
+                sendingObject["userEmail"] = email;
+            }
+            if (subject != "") {
+                sendingObject["userSubject"] = subject;
+            }
+            if (message != "") {
+                sendingObject["userMessage"] = message;
+            }
+            send_message(sendingObject);
+        });
+        function send_message(sendingData) {
+            $.ajax({
+                method: "POST",
+                url: "{{ url_for("send_feedback") }}",
+                data: sendingData,
+                success: function (result) {
+                    swal({
+                        title: "Successful",
+                        text: "",
+                        type: "success",
+                        confirmButtonText: "Go it!"
+                    });
+                },
+                error: function (error) {
+                    swal({
+                        title: "Oh something went wrong!",
+                        text: error.message,
+                        type: "error",
+                        confirmButtonText: "Ok!"
+                    });
+                }
+            });
+        }
+    </script>
+{% endblock %}
