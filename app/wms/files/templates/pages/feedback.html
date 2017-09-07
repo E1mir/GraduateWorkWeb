@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="col-5">
-            <form action="{{ url_for("send_feedback") }}" method="post">
+            <form>
                 <div class="form-group">
                     <label for="userName" class="sr-only">Name</label>
                     <input type="text" class="form-control" id="userName" name="userName" placeholder="Name">
@@ -27,7 +27,7 @@
                               placeholder="Your message"></textarea>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary" id="sendMessage">Submit</button>
+                    <button type="button" class="btn btn-primary" id="sendMessage">Send feedback</button>
                     <button type="reset" class="btn btn-danger">Reset</button>
                 </div>
             </form>
@@ -36,34 +36,11 @@
             <img src="{{ url_for("static",filename="img/contact-us-icon.jpg") }}" class="img-fluid">
         </div>
     </div>
+    <div class="ajax-container">
+        <div class="loader"></div>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
-    <script>
-        var result = {answer: ""};
-        {% if message %}
-            result.answer = "{{ message }}";
-        {% endif %}
-        $(document).ready(function () {
-            custom_alert.call(result);
-        });
-        function custom_alert() {
-            if (this.answer == "success") {
-                swal({
-                    title: "Successful",
-                    text: "",
-                    type: "success",
-                    confirmButtonText: "Go it!"
-                });
-            } else if (this.answer == "error") {
-                swal({
-                    title: "Oh no!",
-                    text: "",
-                    type: "error",
-                    confirmButtonColor: "#000",
-                    confirmButtonText: "Ok!"
-                });
-            }
-        }
-    </script>
+    <script src="{{ url_for("static", filename="js/pages/feedback.js") }}"></script>
 {% endblock %}

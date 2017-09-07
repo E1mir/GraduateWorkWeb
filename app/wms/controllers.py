@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, flash
+from flask import render_template
 from settings import USER, PASSWORD, SMTP
 from abc import ABCMeta
 import smtplib
@@ -77,32 +77,21 @@ class ServiceController(Controller):
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
-        try:
-            message = "Name: {0}\nSender: {1}\nSubject: {2}\nMessage:\n\n{3}".format(
-                message_data["user_name"].encode('utf-8'),
-                message_data["sender"].encode('utf-8'),
-                message_data["subject"].encode('utf-8'),
-                message_data["message"].encode('utf-8')
-            )
-            # Create a text/plain message
-            msg = MIMEText(message)
-            msg['Subject'] = message_data["subject"]
-            msg['From'] = message_data["me"]
-            msg['To'] = message_data["me"]
-            session = smtplib.SMTP(SMTP["HOST"], SMTP["PORT"])
-            session.starttls()
-            session.login(user=USER, password=PASSWORD)
-            session.sendmail(message_data["me"], message_data["me"], msg.as_string())
-            session.quit()
-            sending = "success"
-        except Exception as e:
-            print e
-            sending = "error"
 
-        return render_template(
-            "pages/feedback.html",
-            site={
-                "title": "Contact"
-            },
-            message=sending
+        message = "Name: {0}\nSender: {1}\nSubject: {2}\nMessage:\n\n{3}".format(
+            message_data["user_name"].encode('utf-8'),
+            message_data["sender"].encode('utf-8'),
+            message_data["subject"].encode('utf-8'),
+            message_data["message"].encode('utf-8')
         )
+        # Create a text/plain message
+        msg = MIMEText(message)
+        msg['Subject'] = message_data["subject"]
+        msg['From'] = message_data["me"]
+        msg['To'] = message_data["me"]
+        session = smtplib.SMTP(SMTP["HOST"], SMTP["PORT"])
+        session.starttls()
+        session.login(user=USER, password=PASSWORD)
+        session.sendmail(message_data["me"], message_data["me"], msg.as_string())
+        session.quit()
+        return "success"

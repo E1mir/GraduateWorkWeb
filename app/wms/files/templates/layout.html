@@ -25,7 +25,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
 </nav>
-<main role="main">
+<div role="main">
     <div id="mySidenav" class="sidenav">
         <a href="#">Accounts</a>
         <a href="#">Warehouse</a>
@@ -42,26 +42,30 @@
         {% block content %}
         {% endblock %}
     </div>
-</main>
+</div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="{{ url_for("static", filename="js/jquery.min.js") }}" type="text/javascript"></script>
-<script src="{{ url_for("static", filename="js/popper.min.js") }}" type="text/javascript"></script>
-<script src="{{ url_for("static", filename="js/bootstrap.min.js") }}" type="text/javascript"></script>
+<script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
 <script>
-    var isSidebarOpen = false;
-    var $sidebarToggleButton = $("#sidebarToggleButton");
+    var $sidebarToggleButton = $("#sidebarToggleButton"),
+            $sideBar = $("#mySidenav"),
+            $main = $("#main"),
+            isSidebarOpen = false;
+
     $sidebarToggleButton.on("click", function () {
         if (!isSidebarOpen) {
-            document.getElementById("mySidenav").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
+            $sideBar.css("width", "250px");
+            $main.css("margin-left", "250px");
+            $(this).addClass("change");
             isSidebarOpen = true;
         } else {
-            document.getElementById("mySidenav").style.width = "0";
-            document.getElementById("main").style.marginLeft = "0";
+            $sideBar.css("width", "0");
+            $main.css("margin-left", "0");
+            $(this).removeClass("change");
             isSidebarOpen = false;
         }
-        $("#sidebarToggleButton").toggleClass("change");
     });
 </script>
 <!-- Additional scripts for inherited templates -->
