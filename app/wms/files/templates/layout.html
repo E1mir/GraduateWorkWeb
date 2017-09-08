@@ -11,7 +11,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.min.css") }}">
     <!-- Custom styles CSS-->
-    <link rel="stylesheet" href="{{ url_for("static", filename="css/styles.css") }}">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/styles.min.css") }}">
     <!-- Additional header for inherited templates -->
     {% block additional_header %}{% endblock %}
 </head>
@@ -19,11 +19,13 @@
 <!-- Navigation bar -->
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="{{ url_for("index") }}">WMS</a>
+    <!--
     <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
             data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false"
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+    -->
 </nav>
 <div role="main">
     <div id="mySidenav" class="sidenav">
@@ -31,6 +33,7 @@
         <a href="#">Warehouse</a>
         <a href="#">Orders</a>
         <a href="{{ url_for("contact") }}">Contact</a>
+        <a href="{{ url_for("logout") }}">Log out</a>
     </div>
     <!-- Use any element to open the sidenav -->
     <div class="container-fluid" id="main">
