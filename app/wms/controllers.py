@@ -3,12 +3,41 @@
 from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
 from settings import USER, PASSWORD, SMTP
-from model import User
+from model import User, DatabaseConnector, encrypt_pass
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
 
 user_session_id = 0
+
+
+class Storage(object):
+    def __init__(self):
+        self.storage = DatabaseConnector("wms")
+
+    def get_all_users(self):
+        self.storage.collection("accounts").sort("permission")
+
+    def log_in(self, username, password):
+        account = self.storage.collection("accounts").find_one({"$or": [{"username": username}, {"email": username}]})
+        if account["password"] != password:
+            return abort(401)
+        else:
+            return User(account["_id"], account["permission"])
+
+    def register(self, obj):
+        self.storage.insert("accounts", obj)
+        return "registered"
+
+    def check_unique(self, user):
+        username = self.storage.collection("accounts").count({"username": user["username"]})
+        email = self.storage.collection("accounts").count({"email": user["email"]})
+        if username > 0:
+            return "Username"
+        elif email > 0:
+            return "Email"
+        else:
+            return "Unique"
 
 
 class Controller(object):
@@ -19,6 +48,7 @@ class Controller(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, request):
+        self.storage = Storage()
         self.request = request
 
 
@@ -33,34 +63,27 @@ class UserController(Controller):
 
     def init_user(self):
         if "username" in self.request.form and "password" in self.request.form:
-            username = self.request.form['username']
-            password = self.request.form['password']
-            if password == username + "_":
-                global user_session_id
-                user_session_id += 1
-                self.user = User(user_session_id)
+            username = str(self.request.form["username"]).lower()
+            password = encrypt_pass(str(self.request.form['password']).encode("utf-8"))
+            self.user = self.storage.log_in(username, password)
 
     def login(self):
         self.init_user()
-        if self.request.method == "POST":
-            if self.user is not None:
-                if self.user.type == "admin":
-                    login_user(self.user)
-                    next_page = self.request.args.get("next")
-                    if next_page is None:
-                        return redirect("/home")
-                    else:
-                        return redirect(next_page)
+        if self.user is not None:
+            if self.user.permission == "admin":
+                login_user(self.user)
+                next_page = self.request.args.get("next")
+                if next_page is None:
+                    return redirect("/home")
                 else:
-                    return abort(423)
+                    return redirect(next_page)
             else:
-                return abort(401)
+                return abort(423)
         else:
-            return render_template(
-                "login.html",
-            )
+            return abort(401)
 
-    def logout(self):
+    @staticmethod
+    def logout():
         logout_user()
         flash("Logged out!")
         return render_template(
@@ -69,7 +92,7 @@ class UserController(Controller):
 
     def index(self):
         return render_template(
-            "pages/home.html",
+            "account/home.html",
             site={
                 "title": "Warehouse Management System"
             },
@@ -85,13 +108,31 @@ class StaticPageController(Controller):
     def __init__(self, request):
         super(StaticPageController, self).__init__(request)
 
-    def contact(self):
+    @staticmethod
+    def contact():
         return render_template(
-            "pages/feedback.html",
+            "feedback.html",
             site={
                 "title": "Contact"
             }
         )
+
+    @staticmethod
+    def registration():
+        return render_template(
+            "register.html"
+        )
+
+    @staticmethod
+    def login():
+        return render_template(
+            "login.html"
+        )
+
+
+class ServiceController(Controller):
+    def __init__(self, request):
+        super(ServiceController, self).__init__(request)
 
     def get_register_data(self):
         user_data = None
@@ -105,32 +146,24 @@ class StaticPageController(Controller):
             if "email" in self.request.form:
                 user_data["email"] = str(self.request.form["email"]).lower()
             if "password" in self.request.form:
-                user_data["password"] = str(self.request.form["password"]).encode("utf-8")
+                user_data["password"] = encrypt_pass(str(self.request.form["password"]).encode("utf-8"))
             if "type" in self.request.form:
                 user_data["type"] = self.request.form["type"]
         return user_data
 
-    def registration(self):
-        return render_template(
-            "register.html"
-        )
-
     def register(self):
         if self.request.method == "POST":
             user_data = self.get_register_data()
-            print user_data
-            flash("You are registered! You can use new account on our mobile app!")
-            return render_template(
-                "login.html",
-                msg_type="success"
-            )
+            check_u_data = self.storage.check_unique(user_data)
+            if check_u_data != "Username" and check_u_data != "Email":
+                self.storage.register(user_data)
+                flash("You are registered! But you can use new account only in our mobile app!")
+                return redirect("/login")
+            else:
+                flash("{} has been already taken!".format(check_u_data))
+                return redirect("/registration")
 
-
-class ServiceController(Controller):
-    def __init__(self, request):
-        super(ServiceController, self).__init__(request)
-
-    def get_form_data(self):
+    def get_feedback_data(self):
         form_data = {
             "me": USER
         }
@@ -145,12 +178,7 @@ class ServiceController(Controller):
         return form_data
 
     def send_feedback(self):
-        # Open a plain text file for reading.  For this example, assume that
-        # the text file contains only ASCII characters.
-        message_data = self.get_form_data()
-
-        # Send the message via our own SMTP server, but don't include the
-        # envelope header.
+        message_data = self.get_feedback_data()
 
         message = "Name: {0}\nSender: {1}\nSubject: {2}\nMessage:\n\n{3}".format(
             message_data["user_name"].encode('utf-8'),
@@ -158,7 +186,6 @@ class ServiceController(Controller):
             message_data["subject"].encode('utf-8'),
             message_data["message"].encode('utf-8')
         )
-        # Create a text/plain message
         msg = MIMEText(message)
         msg['Subject'] = message_data["subject"]
         msg['From'] = message_data["me"]

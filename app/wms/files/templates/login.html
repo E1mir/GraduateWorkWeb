@@ -45,7 +45,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form action="{{ url_for("login") }}" method="post">
+        <form action="{{ url_for("sign_in") }}" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" name="username" id="username" class="form-control" placeholder="Username or email">
@@ -62,6 +62,11 @@
     </div>
 
 </div>
+<footer class="footer">
+    <div class="footer-container">
+        Developed by Elmir I-de &copy;2017 <a href="{{ url_for("contact") }}">Contact me</a>
+    </div>
+</footer>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>

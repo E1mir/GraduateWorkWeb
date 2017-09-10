@@ -29,6 +29,12 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    controller = StaticPageController(request)
+    return controller.login()
+
+
+@app.route("/signIn", methods=["GET", "POST"])
+def sign_in():
     controller = UserController(request)
     return controller.login()
 
@@ -41,7 +47,7 @@ def registration():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    controller = StaticPageController(request)
+    controller = ServiceController(request)
     return controller.register()
 
 
@@ -62,6 +68,9 @@ def send_feedback():
 def logout():
     controller = UserController(request)
     return controller.logout()
+
+
+'''Error handlers'''
 
 
 @app.errorhandler(401)

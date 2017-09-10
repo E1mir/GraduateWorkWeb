@@ -1,11 +1,77 @@
 from flask_login import UserMixin
+import pymongo
+import decimal
+import datetime
+from bson import ObjectId
+from settings import DB_CONNECTION_STRING
+
+
+class DatabaseConnector(object):
+    def __init__(self, database_name, limit=1000):
+        self.client = pymongo.MongoClient(DB_CONNECTION_STRING)
+        self.database = self.client[database_name]
+        self.limit = limit
+
+    def insert(self, collection, insert_object):
+        return self.database[collection].insert_one(insert_object).inserted_id
+
+    def update(self, collection, upd_object):
+        upd_object_id = ObjectId(upd_object["_id"])
+        return self.database[collection].update_one(
+            {"_id": upd_object_id},
+            {"$set": upd_object},
+            upsert=True
+        )
+
+    def save(self, collection, query_object, obj):
+        return self.database[collection].update_one(
+            query_object,
+            {"$set": obj},
+            upsert=True
+        )
+
+    def delete_by_object_id(self, collection, obj_id):
+        return self.database[collection].delete_one({"_id": ObjectId(obj_id)})
+
+    def list_by_query(self, collection, query_object):
+        return self.database[collection].find(query_object)
+
+    def count_by_query(self, collection, query_object):
+        return self.database[collection].count(query_object)
+
+    def collection(self, collection):
+        return self.database[collection]
+
+
+class CollectionModel(object):
+    """
+        Parent class for creating class and object instances of storage collection dict.
+        Automatically create instance of class by it is fields.
+    """
+
+    def __init__(self, d):
+        for item in self.__dict__:
+            self.__dict__[item] = d.get(item, None)
 
 
 class User(UserMixin):
-    def __init__(self, _id):
+    def __init__(self, _id, permission="default"):
         self.id = _id
-        self.name = "Lol"
-        self.type = "admin"
+        self.permission = permission
+
+
+'''Database objects'''
+
+
+class StorageAccountModel(CollectionModel):
+    def __init__(self, d):
+        self._id = None
+        self.username = None
+        self.email = None
+        self.balance = None
+        self.type = ""
+        self.permission = None
+        super(StorageAccountModel, self).__init__(d)
 
 
 ''' Very simple encryption functions'''
@@ -19,21 +85,3 @@ def encrypt_pass(normal_password):
         e_char = chr(enc_id)
         encrypted_password += e_char
     return encrypted_password
-
-
-def decrypt_pass(encrypted_password):
-    decrypted_password = ""
-    for e_char in encrypted_password:
-        e_ch_id = ord(e_char)
-        dec_id = e_ch_id - 5
-        d_char = chr(dec_id)
-        decrypted_password += d_char
-    return decrypted_password
-
-
-if __name__ == '__main__':
-    password = "Hello World!"
-    enc = encrypt_pass(password)
-    print enc
-    dec = decrypt_pass(enc)
-    print dec

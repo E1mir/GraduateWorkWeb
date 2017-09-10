@@ -13,13 +13,26 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">WMS</a>
+    <a class="navbar-brand" href="{{ url_for("index") }}">WMS</a>
 </nav>
 <div class="container">
     <br>
     <div class="form-centered">
         <h1 class="text-center">WMS Register</h1>
         <br>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>{{ message }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <form action="{{ url_for("register") }}" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -52,5 +65,6 @@
 <script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
+
 </body>
 </html>
