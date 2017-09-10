@@ -1,16 +1,16 @@
 from flask import Flask, redirect, request, flash
 from flask_login import login_required, LoginManager
 from model import User
-from settings import DEBUG
+from settings import DEBUG, TEMPLATE_FOLDER, STATIC_FOLDER, S_KEY
 from controllers import UserController, StaticPageController, ServiceController
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-app.secret_key = 'ThisIsMyGraduationWork:"WarehouseManagementSystem"'
-app.template_folder = "files/templates"
-app.static_folder = "files/static"
+app.secret_key = S_KEY
+app.template_folder = TEMPLATE_FOLDER
+app.static_folder = STATIC_FOLDER
 if DEBUG:
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # turns off script caching
 
@@ -31,6 +31,12 @@ def home():
 def login():
     controller = UserController(request)
     return controller.login()
+
+
+@app.route("/registration", methods=["GET", "POST"])
+def registration():
+    controller = StaticPageController(request)
+    return controller.registration()
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -61,6 +67,12 @@ def logout():
 @app.errorhandler(401)
 def page_not_found(e):
     flash("Username or password incorrect")
+    return redirect("/login")
+
+
+@app.errorhandler(423)
+def page_not_have_permission(e):
+    flash("Access denied! You don't have permission!")
     return redirect("/login")
 
 

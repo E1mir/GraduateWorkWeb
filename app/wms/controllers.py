@@ -4,10 +4,11 @@ from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
 from settings import USER, PASSWORD, SMTP
 from model import User
-
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
+
+user_session_id = 0
 
 
 class Controller(object):
@@ -35,18 +36,23 @@ class UserController(Controller):
             username = self.request.form['username']
             password = self.request.form['password']
             if password == username + "_":
-                self.user = User(1)
+                global user_session_id
+                user_session_id += 1
+                self.user = User(user_session_id)
 
     def login(self):
         self.init_user()
         if self.request.method == "POST":
             if self.user is not None:
-                login_user(self.user)
-                next_page = self.request.args.get("next")
-                if next_page is None:
-                    return redirect("/home")
+                if self.user.type == "admin":
+                    login_user(self.user)
+                    next_page = self.request.args.get("next")
+                    if next_page is None:
+                        return redirect("/home")
+                    else:
+                        return redirect(next_page)
                 else:
-                    return redirect(next_page)
+                    return abort(423)
             else:
                 return abort(401)
         else:
@@ -87,8 +93,37 @@ class StaticPageController(Controller):
             }
         )
 
+    def get_register_data(self):
+        user_data = None
+        if self.request.method == "POST":
+            user_data = {
+                "balance": 0,
+                "permission": "default"
+            }
+            if "username" in self.request.form:
+                user_data["username"] = str(self.request.form["username"]).lower()
+            if "email" in self.request.form:
+                user_data["email"] = str(self.request.form["email"]).lower()
+            if "password" in self.request.form:
+                user_data["password"] = str(self.request.form["password"]).encode("utf-8")
+            if "type" in self.request.form:
+                user_data["type"] = self.request.form["type"]
+        return user_data
+
+    def registration(self):
+        return render_template(
+            "register.html"
+        )
+
     def register(self):
-        pass
+        if self.request.method == "POST":
+            user_data = self.get_register_data()
+            print user_data
+            flash("You are registered! You can use new account on our mobile app!")
+            return render_template(
+                "login.html",
+                msg_type="success"
+            )
 
 
 class ServiceController(Controller):
