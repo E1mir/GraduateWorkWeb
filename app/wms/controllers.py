@@ -52,6 +52,10 @@ class Storage(object):
         for account_type in types:
             yield StorageTypeModel(account_type)
 
+    def add_new_type(self, new_type):
+        self.storage.insert("types", new_type)
+        return "Success"
+
 
 class Controller(object):
     """
@@ -107,6 +111,18 @@ class UserController(Controller):
             "account/accounts.html",
             site={
                 "title": "WMS Accounts"
+            },
+            model=model
+        )
+
+    def types(self):
+        types = self.storage.get_types()
+        model = WMSTypesModel()
+        model.types = types
+        return render_template(
+            "account/types.html",
+            site={
+                "title": "WMS Types"
             },
             model=model
         )
@@ -193,6 +209,31 @@ class ServiceController(Controller):
             else:
                 flash("{} has been already taken!".format(check_u_data), 'alert-danger')
                 return redirect("/registration")
+
+    def get_type_data(self):
+        type_data = None
+        if self.request.method == "POST":
+            if "name" in self.request.form:
+                type_data = {}
+                name = str(self.request.form["name"]).rstrip().capitalize()
+                if name != "":
+                    type_data["name"] = name
+                    return type_data
+                else:
+                    return None
+        return type_data
+
+    def add_type(self):
+        new_type_data = self.get_type_data()
+        if new_type_data is None:
+            flash("Field is empty!", "alert-danger")
+            return redirect("/types")
+        status = self.storage.add_new_type(new_type_data)
+        if status == "Success":
+            flash("Type {} added".format(new_type_data["name"]), "alert-success")
+            return redirect("/types")
+        flash("Something wend wrong!", "alert-danger")
+        return redirect("/types")
 
     def get_edited_user_data(self):
         user_data = {}

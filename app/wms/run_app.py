@@ -59,6 +59,18 @@ def register():
     return controller.register()
 
 
+@app.route("/types")
+def types():
+    controller = UserController(request)
+    return controller.types()
+
+
+@app.route("/add_type", methods=["GET", "POST"])
+def add_type():
+    controller = ServiceController(request)
+    return controller.add_type()
+
+
 @app.route("/users/edit/<string:username>", methods=["GET", "POST"])
 def edit(username):
     controller = ServiceController(request)

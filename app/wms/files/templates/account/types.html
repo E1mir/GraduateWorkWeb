@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block additional_header %}
+    <style>
+        .round-button {
+            border-radius: 100%;
+            tab-size: 20px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+        <h1> Types </h1>
+        <button class="btn btn-info round-button float-right" data-toggle="modal"
+                data-target="#addType">&plus;</button>
+        <div class="row">
+            <div class="col"></div>
+            <div class="table-responsive col-6">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }} alert-dismissible fade show" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <strong>{{ message }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for type in model.types %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ type.name }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="addType">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ url_for("add_type") }}" method="post">
+                    <div class="modal-body">
+                        <label for="name">Type name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+{% endblock %}
