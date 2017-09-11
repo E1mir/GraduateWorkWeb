@@ -22,7 +22,7 @@ class Storage(object):
     def log_in(self, username, password):
         account = self.storage.collection("accounts").find_one({"$or": [{"username": username}, {"email": username}]})
         if account is not None:
-            if account["password"] != password:
+            if account["password"].encode('utf-8') != password:
                 return None
             else:
                 return User(account["_id"], account["permission"])
@@ -100,7 +100,8 @@ class UserController(Controller):
     def init_user(self):
         if "username" in self.request.form and "password" in self.request.form:
             username = str(self.request.form["username"]).lower()
-            password = encrypt_pass(str(self.request.form['password']).encode("utf-8"))
+            password = encrypt_pass(str(self.request.form['password'].encode('utf-8')))
+            print password
             self.user = self.storage.log_in(username, password)
 
     def login(self):
@@ -226,7 +227,7 @@ class ServiceController(Controller):
             if "email" in self.request.form:
                 user_data["email"] = str(self.request.form["email"]).lower()
             if "password" in self.request.form:
-                user_data["password"] = encrypt_pass(str(self.request.form["password"]).encode("utf-8"))
+                user_data["password"] = encrypt_pass(str(self.request.form["password"].encode("utf-8")))
             if "type" in self.request.form:
                 user_data["type"] = self.request.form["type"]
         return user_data
@@ -304,7 +305,7 @@ class ServiceController(Controller):
         if self.request.method == "POST":
             user_data["username"] = str(self.request.form["username"]).lower()
             user_data["email"] = str(self.request.form["email"]).lower()
-            user_data["password"] = str(self.request.form["password"]).encode("utf-8")
+            user_data["password"] = str(self.request.form["password"].encode("utf-8"))
             user_data["type"] = self.request.form["type"]
             user_data["balance"] = float(self.request.form["balance"])
             user_data["permission"] = self.request.form["permission"]
