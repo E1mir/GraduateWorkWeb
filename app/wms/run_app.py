@@ -59,6 +59,12 @@ def register():
     return controller.register()
 
 
+@app.route("/users/edit/<string:username>", methods=["GET", "POST"])
+def edit(username):
+    controller = ServiceController(request)
+    return controller.edit(username)
+
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     controller = StaticPageController(request)

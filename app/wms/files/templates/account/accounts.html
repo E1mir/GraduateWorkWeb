@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block additional_header %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/sweetalert.css") }}">
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -9,24 +10,28 @@
             <table class="table table-stripped">
                 <thead>
                 <tr>
+                    <th>№</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Type</th>
                     <th>Permission</th>
                     <th>Balance</th>
+                    <th class="sr-only"></th>
                     <th>Operation</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for account in model.accounts %}
-                    <tr>
+                    <tr class="account">
+                        <td>{{ loop.index }}</td>
                         <td>{{ account.username }}</td>
                         <td>{{ account.email }}</td>
                         <td>{{ account.type }}</td>
                         <td>{{ account.permission }}</td>
                         <td>{{ account.balance }}</td>
+                        <td class="sr-only">{{ account.password }}</td>
                         <td>
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                            <button type="button" class="btn btn-primary edit-account" data-toggle="modal"
                                     data-target="#editAccount">
                                 Edit
                             </button>
@@ -36,8 +41,13 @@
                 </tbody>
             </table>
         </div>
+        <div class="ajax-container">
+            <div class="loader"></div>
+        </div>
     </div>
     {% include "account/modal.edit.account.html" %}
 {% endblock %}
 {% block scripts %}
+    <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/pages/edit_account.js") }}"></script>
 {% endblock %}

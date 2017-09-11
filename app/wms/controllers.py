@@ -33,6 +33,10 @@ class Storage(object):
         self.storage.insert("accounts", obj)
         return "registered"
 
+    def edit_user(self, username, edited_user):
+        self.storage.save("accounts", {"username": username}, edited_user)
+        return "edited"
+
     def check_unique(self, user):
         username = self.storage.collection("accounts").count({"username": user["username"]})
         email = self.storage.collection("accounts").count({"email": user["email"]})
@@ -44,7 +48,7 @@ class Storage(object):
             return "Unique"
 
     def get_types(self):
-        types = self.storage.collection("types").find({})
+        types = self.storage.collection("types").find({}).sort("name", 1)
         for account_type in types:
             yield StorageTypeModel(account_type)
 
@@ -189,6 +193,26 @@ class ServiceController(Controller):
             else:
                 flash("{} has been already taken!".format(check_u_data), 'alert-danger')
                 return redirect("/registration")
+
+    def get_edited_user_data(self):
+        user_data = {}
+        if self.request.method == "POST":
+            user_data["username"] = str(self.request.form["username"]).lower()
+            user_data["email"] = str(self.request.form["email"]).lower()
+            user_data["password"] = str(self.request.form["password"]).encode("utf-8")
+            user_data["type"] = self.request.form["type"]
+            user_data["balance"] = int(self.request.form["balance"])
+            user_data["permission"] = self.request.form["permission"]
+
+        return user_data
+
+    def edit(self, username):
+        edited_user = self.get_edited_user_data()
+        status = self.storage.edit_user(username, edited_user)
+        if status == "edited":
+            return "Edited!"
+        else:
+            raise Exception("User not Found!")
 
     def get_feedback_data(self):
         form_data = {
