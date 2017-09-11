@@ -69,9 +69,27 @@ class StorageAccountModel(CollectionModel):
         self.username = None
         self.email = None
         self.balance = None
-        self.type = ""
+        self.type = None
         self.permission = None
         super(StorageAccountModel, self).__init__(d)
+
+
+class StorageTypeModel(CollectionModel):
+    def __init__(self, d):
+        self.name = None
+        super(StorageTypeModel, self).__init__(d)
+
+
+class WMSAccountsModel(object):
+    def __init__(self):
+        self.types = None
+        self.permissions = None
+        self.accounts = None
+
+
+class WMSTypesModel(object):
+    def __init__(self):
+        self.types = None
 
 
 ''' Very simple encryption functions'''

@@ -27,6 +27,13 @@ def home():
     return controller.index()
 
 
+@app.route("/accounts", methods=["GET", "POST"])
+@login_required
+def accounts():
+    controller = UserController(request)
+    return controller.accounts()
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     controller = StaticPageController(request)

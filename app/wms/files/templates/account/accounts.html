@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block additional_header %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+        <h1>Accounts list</h1>
+        <div class="table-responsive">
+            <table class="table table-stripped">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Permission</th>
+                    <th>Balance</th>
+                    <th>Operation</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for account in model.accounts %}
+                    <tr>
+                        <td>{{ account.username }}</td>
+                        <td>{{ account.email }}</td>
+                        <td>{{ account.type }}</td>
+                        <td>{{ account.permission }}</td>
+                        <td>{{ account.balance }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#editAccount">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% include "account/modal.edit.account.html" %}
+{% endblock %}
+{% block scripts %}
+{% endblock %}

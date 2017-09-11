@@ -3,12 +3,11 @@
 from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
 from settings import USER, PASSWORD, SMTP
-from model import User, DatabaseConnector, encrypt_pass
+from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, WMSAccountsModel, WMSTypesModel, \
+    encrypt_pass
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
-
-user_session_id = 0
 
 
 class Storage(object):
@@ -16,7 +15,9 @@ class Storage(object):
         self.storage = DatabaseConnector("wms")
 
     def get_all_users(self):
-        self.storage.collection("accounts").sort("permission")
+        users = self.storage.collection("accounts").find({}).sort("permission")
+        for account in users:
+            yield StorageAccountModel(account)
 
     def log_in(self, username, password):
         account = self.storage.collection("accounts").find_one({"$or": [{"username": username}, {"email": username}]})
@@ -38,6 +39,11 @@ class Storage(object):
             return "Email"
         else:
             return "Unique"
+
+    def get_types(self):
+        types = self.storage.collection("types").find({})
+        for account_type in types:
+            yield StorageTypeModel(account_type)
 
 
 class Controller(object):
@@ -82,6 +88,22 @@ class UserController(Controller):
         else:
             return abort(401)
 
+    def accounts(self):
+        permissions = ["admin", "default"]
+        types = self.storage.get_types()
+        get_accounts = self.storage.get_all_users()
+        model = WMSAccountsModel()
+        model.types = types
+        model.permissions = permissions
+        model.accounts = get_accounts
+        return render_template(
+            "account/accounts.html",
+            site={
+                "title": "WMS Accounts"
+            },
+            model=model
+        )
+
     @staticmethod
     def logout():
         logout_user()
@@ -117,10 +139,12 @@ class StaticPageController(Controller):
             }
         )
 
-    @staticmethod
-    def registration():
+    def registration(self):
+        model = WMSTypesModel()
+        model.types = self.storage.get_types()
         return render_template(
-            "register.html"
+            "register.html",
+            model=model
         )
 
     @staticmethod
