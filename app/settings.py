@@ -12,7 +12,6 @@ DB_CONNECTION_STRING = "mongodb://{}:{}" \
                        "@wms-shard-00-00-nkihn.mongodb.net:27017," \
                        "wms-shard-00-01-nkihn.mongodb.net:27017," \
                        "wms-shard-00-02-nkihn.mongodb.net:27017/" \
-                       "test?ssl=true&replicaSet=wms-shard-0&authSource=admin".format(
-    "kryternext",
-    urllib.quote(DB_PASS),
-)
+                       "test?ssl=true&replicaSet=wms-shard-0&authSource=admin".format("kryternext",
+                                                                                      urllib.quote(DB_PASS)
+                                                                                      )

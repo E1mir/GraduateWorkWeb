@@ -8,6 +8,7 @@ app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+login_manager.login_message_category = "alert-danger"
 app.secret_key = S_KEY
 app.template_folder = TEMPLATE_FOLDER
 app.static_folder = STATIC_FOLDER
@@ -82,13 +83,8 @@ def logout():
 
 @app.errorhandler(401)
 def page_not_found(e):
-    flash("Username or password incorrect", 'alert-danger')
-    return redirect("/login")
-
-
-@app.errorhandler(423)
-def page_not_have_permission(e):
-    flash("Access denied! You don't have permission!", 'alert-danger')
+    message = str(e).split(":")[1].rstrip()
+    flash(message, 'alert-danger')
     return redirect("/login")
 
 

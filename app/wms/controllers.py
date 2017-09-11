@@ -21,10 +21,13 @@ class Storage(object):
 
     def log_in(self, username, password):
         account = self.storage.collection("accounts").find_one({"$or": [{"username": username}, {"email": username}]})
-        if account["password"] != password:
-            return abort(401)
+        if account is not None:
+            if account["password"] != password:
+                return None
+            else:
+                return User(account["_id"], account["permission"])
         else:
-            return User(account["_id"], account["permission"])
+            return None
 
     def register(self, obj):
         self.storage.insert("accounts", obj)
@@ -84,9 +87,9 @@ class UserController(Controller):
                 else:
                     return redirect(next_page)
             else:
-                return abort(423)
+                return abort(401, "Access denied! You don't have permission!")
         else:
-            return abort(401)
+            return abort(401, "Username or password incorrect!")
 
     def accounts(self):
         permissions = ["admin", "default"]
