@@ -82,13 +82,13 @@ def logout():
 
 @app.errorhandler(401)
 def page_not_found(e):
-    flash("Username or password incorrect")
+    flash("Username or password incorrect", 'alert-danger')
     return redirect("/login")
 
 
 @app.errorhandler(423)
 def page_not_have_permission(e):
-    flash("Access denied! You don't have permission!")
+    flash("Access denied! You don't have permission!", 'alert-danger')
     return redirect("/login")
 
 

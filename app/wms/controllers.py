@@ -107,7 +107,7 @@ class UserController(Controller):
     @staticmethod
     def logout():
         logout_user()
-        flash("Logged out!")
+        flash("Logged out!", 'alert-warning')
         return render_template(
             "login.html",
         )
@@ -181,10 +181,10 @@ class ServiceController(Controller):
             check_u_data = self.storage.check_unique(user_data)
             if check_u_data != "Username" and check_u_data != "Email":
                 self.storage.register(user_data)
-                flash("You are registered! But you can use new account only in our mobile app!")
+                flash("You are registered! But you can use new account only in our mobile app!", 'alert-warning')
                 return redirect("/login")
             else:
-                flash("{} has been already taken!".format(check_u_data))
+                flash("{} has been already taken!".format(check_u_data), 'alert-danger')
                 return redirect("/registration")
 
     def get_feedback_data(self):
