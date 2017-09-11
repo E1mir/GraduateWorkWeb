@@ -1,0 +1,16 @@
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for type in model.types %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ type.name }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block additional_header %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/sweetalert.css") }}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+        <h1>Goods list
+            <button class="btn btn-success round-button float-right" data-toggle="modal"
+                    data-target="#addProduct">&plus;</button>
+        </h1>
+        {% include "layout.alert.html" %}
+        <div class="table-responsive">
+            {% include "tables/warehouse.table.html" %}
+        </div>
+        <div class="ajax-container">
+            <div class="loader"></div>
+        </div>
+    </div>
+    {% include "modals/modal.add.product.html" %}
+    {% include "modals/modal.edit.product.html" %}
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/pages/edit_product.js") }}"></script>
+{% endblock %}

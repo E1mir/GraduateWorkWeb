@@ -3,8 +3,8 @@
 from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
 from settings import USER, PASSWORD, SMTP
-from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, WMSAccountsModel, WMSTypesModel, \
-    encrypt_pass
+from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, StorageGoodsModel, WMSAccountsModel, \
+    WMSTypesModel, WMSWarehouseModel, encrypt_pass
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
@@ -53,8 +53,27 @@ class Storage(object):
             yield StorageTypeModel(account_type)
 
     def add_new_type(self, new_type):
-        self.storage.insert("types", new_type)
-        return "Success"
+        if self.storage.count_by_query("types", {"name": new_type["name"]}) == 0:
+            self.storage.insert("types", new_type)
+            return "Success"
+        else:
+            return "Exist"
+
+    def get_goods(self):
+        goods = self.storage.collection("warehouse").find({}).sort("type", 1)
+        for product in goods:
+            yield StorageGoodsModel(product)
+
+    def add_product(self, new_product):
+        if self.storage.count_by_query("warehouse", {"name": new_product["name"]}) == 0:
+            self.storage.insert("warehouse", new_product)
+            return "Success"
+        else:
+            return "Exist"
+
+    def edit_product(self, name, updated_product):
+        self.storage.save("warehouse", {"name": name}, updated_product)
+        return "Edited"
 
 
 class Controller(object):
@@ -127,6 +146,20 @@ class UserController(Controller):
             model=model
         )
 
+    def warehouse(self):
+        goods = self.storage.get_goods()
+        types = self.storage.get_types()
+        model = WMSWarehouseModel()
+        model.warehouse = goods
+        model.types = list(types)
+        return render_template(
+            "account/warehouse.html",
+            site={
+                "title": "WMS Warehouse"
+            },
+            model=model
+        )
+
     @staticmethod
     def logout():
         logout_user()
@@ -185,7 +218,7 @@ class ServiceController(Controller):
         user_data = None
         if self.request.method == "POST":
             user_data = {
-                "balance": 0,
+                "balance": 0.0,
                 "permission": "default"
             }
             if "username" in self.request.form:
@@ -232,8 +265,39 @@ class ServiceController(Controller):
         if status == "Success":
             flash("Type {} added".format(new_type_data["name"]), "alert-success")
             return redirect("/types")
-        flash("Something wend wrong!", "alert-danger")
+        if status == "Exist":
+            flash("Type {} already exist!".format(new_type_data["name"]), "alert-warning")
+            return redirect("/types")
+        flash("Something went wrong!", "alert-danger")
         return redirect("/types")
+
+    def get_product_data(self):
+        product_data = None
+        if self.request.method == "POST":
+            product_data = {
+                "description": "",
+                "count": 0
+            }
+            try:
+                product_data["name"] = str(self.request.form["name"]).rstrip().capitalize()
+                product_data["type"] = str(self.request.form["type"]).rstrip().capitalize()
+                product_data["price"] = float(self.request.form["price"])
+            except:
+                return None
+        return product_data
+
+    def add_product(self):
+        new_product_data = self.get_product_data()
+        status = self.storage.add_product(new_product_data)
+        if status == "Success":
+            flash("{} added!".format(new_product_data["name"]), "alert-success")
+            return redirect("/warehouse")
+        if status == "Exist":
+            flash("Product {} already exist!".format(new_product_data["name"]), "alert-warning")
+            return redirect("/warehouse")
+        else:
+            flash("Something went wrong!", "alert-danger")
+            return redirect("/warehouse")
 
     def get_edited_user_data(self):
         user_data = {}
@@ -242,18 +306,50 @@ class ServiceController(Controller):
             user_data["email"] = str(self.request.form["email"]).lower()
             user_data["password"] = str(self.request.form["password"]).encode("utf-8")
             user_data["type"] = self.request.form["type"]
-            user_data["balance"] = int(self.request.form["balance"])
+            user_data["balance"] = float(self.request.form["balance"])
             user_data["permission"] = self.request.form["permission"]
 
         return user_data
 
-    def edit(self, username):
+    def edit_account(self, username):
         edited_user = self.get_edited_user_data()
         status = self.storage.edit_user(username, edited_user)
+        model = WMSAccountsModel()
+        model.accounts = self.storage.get_all_users()
+        model.types = self.storage.get_types()
+        model.permissions = ["admin", "default"]
         if status == "edited":
-            return "Edited!"
+            return render_template(
+                "tables/accounts.table.html",
+                model=model
+            )
         else:
             raise Exception("User not Found!")
+
+    def get_edited_product_data(self):
+        product_data = {}
+        if self.request.method == "POST":
+            product_data["name"] = self.request.form["name"]
+            product_data["type"] = self.request.form["type"]
+            product_data["price"] = float(self.request.form["price"])
+            if "description" in self.request.form:
+                product_data["description"] = self.request.form["description"]
+            if "count" in self.request.form:
+                product_data["count"] = self.request.form["count"]
+        return product_data
+
+    def edit_product(self, name):
+        edited_product = self.get_edited_product_data()
+        status = self.storage.edit_product(name, edited_product)
+        model = WMSWarehouseModel()
+        model.warehouse = self.storage.get_goods()
+        model.types = self.storage.get_types()
+        if status == "Edited":
+            return render_template(
+                "tables/warehouse.table.html",
+                model=model
+            )
+        raise Exception("Product not found!")
 
     def get_feedback_data(self):
         form_data = {

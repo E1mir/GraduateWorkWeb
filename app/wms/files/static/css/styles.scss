@@ -11,12 +11,11 @@ h1 {
 
 /* The side navigation menu */
 .sidenav {
-  margin-top: 3.5rem;
   height: 100%;
   /* 100% Full-height */
   width: 0;
   /* 0 width - change this with JavaScript */
-  position: fixed;
+  position: absolute;
   /* Stay in place */
   z-index: 1;
   /* Stay on top */
@@ -76,6 +75,7 @@ h1 {
 .menu_button {
   display: inline-block;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .bar1, .bar2, .bar3 {
@@ -171,4 +171,19 @@ h1 {
   max-width: 680px;
   padding: 0 15px;
   float: right;
+}
+
+/* Hide HTML5 Up and Down arrows. */
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.round-button {
+  border-radius: 100%;
+  tab-size: 20px;
 }

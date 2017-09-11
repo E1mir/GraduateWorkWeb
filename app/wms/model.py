@@ -81,6 +81,16 @@ class StorageTypeModel(CollectionModel):
         super(StorageTypeModel, self).__init__(d)
 
 
+class StorageGoodsModel(CollectionModel):
+    def __init__(self, d):
+        self.name = None
+        self.type = None
+        self.price = None
+        self.description = None
+        self.count = None
+        super(StorageGoodsModel, self).__init__(d)
+
+
 class WMSAccountsModel(object):
     def __init__(self):
         self.types = None
@@ -90,6 +100,12 @@ class WMSAccountsModel(object):
 
 class WMSTypesModel(object):
     def __init__(self):
+        self.types = None
+
+
+class WMSWarehouseModel(object):
+    def __init__(self):
+        self.warehouse = None
         self.types = None
 
 

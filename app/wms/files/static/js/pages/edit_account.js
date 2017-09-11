@@ -51,9 +51,10 @@ $(document).on("click", "button.save-changes", function () {
         url: "/users/edit/" + username,
         data: update_object,
         success: function (response) {
+            $(".table-responsive").html(response);
             swal({
                 title: "Account edited!",
-                text: "Update page",
+                text: "",
                 type: "success",
                 confirmButtonText: "Ok"
             });

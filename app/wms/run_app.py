@@ -65,16 +65,34 @@ def types():
     return controller.types()
 
 
+@app.route("/warehouse")
+def warehouse():
+    controller = UserController(request)
+    return controller.warehouse()
+
+
 @app.route("/add_type", methods=["GET", "POST"])
 def add_type():
     controller = ServiceController(request)
     return controller.add_type()
 
 
-@app.route("/users/edit/<string:username>", methods=["GET", "POST"])
-def edit(username):
+@app.route("/add_product", methods=["POST", "POST"])
+def add_product():
     controller = ServiceController(request)
-    return controller.edit(username)
+    return controller.add_product()
+
+
+@app.route("/users/edit/<string:username>", methods=["GET", "POST"])
+def account_edit(username):
+    controller = ServiceController(request)
+    return controller.edit_account(username)
+
+
+@app.route("/goods/edit/<string:name>", methods=["GET", "POST"])
+def product_edit(name):
+    controller = ServiceController(request)
+    return controller.edit_product(name)
 
 
 @app.route("/contact", methods=["GET", "POST"])

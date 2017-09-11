@@ -1,0 +1,32 @@
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Count</th>
+        <th>Operation</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if model %}
+        {% for product in model.warehouse %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.type }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.count }}</td>
+                <td>
+                    <button class="btn btn-primary edit-product" data-toggle="modal"
+                            data-target="#editProduct">Edit
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>

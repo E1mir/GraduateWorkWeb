@@ -1,15 +1,14 @@
-<div class="modal fade" id="editAccount">
+<div class="modal fade" id="editProduct">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit account</h5>
+                <h5 class="modal-title">Edit product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form>
                 <div class="modal-body">
-
                     <table class="table">
                         <thead>
                         <tr>
@@ -19,18 +18,17 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td>Username</td>
-                            <td id="username"></td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td id="email"></td>
+                            <td>Name</td>
+                            <td>
+                                <label for="editName" class="sr-only">Name </label>
+                                <input type="text" id="editName" class="form-control" name="name" required/>
+                            </td>
                         </tr>
                         <tr>
                             <td>Type</td>
                             <td>
-                                <label for="type" class="sr-only">Type</label>
-                                <select name="type" id="type" class="custom-select">
+                                <label for="editType" class="sr-only"></label>
+                                <select name="type" id="editType" class="custom-select" required>
                                     {% for type in model.types %}
                                         <option value="{{ type.name }}">{{ type.name }}</option>
                                     {% endfor %}
@@ -38,28 +36,25 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Permission</td>
+                            <td>Description</td>
                             <td>
-                                <label for="permission" class="sr-only">Permission</label>
-                                <select name="permission" id="permission" class="custom-select">
-                                    {% for permission in model.permissions %}
-                                        <option value="{{ permission }}">{{ permission }}</option>
-                                    {% endfor %}
-                                </select>
+                                <label for="description" class="sr-only">Permission</label>
+                                <textarea name="description" class="form-control" id="description" cols="30"
+                                          rows="3"></textarea>
                             </td>
                         </tr>
                         <tr>
                             <td>Balance</td>
                             <td>
-                                <label for="balance" class="sr-only">Balance</label>
-                                <input type="number" id="balance" name="balance" class="form-control">
+                                <label for="editPrice" class="sr-only">Balance</label>
+                                <input type="number" id="editPrice" name="price" step="any" class="form-control">
                             </td>
                         </tr>
-                        <tr class="sr-only">
-                            <td>Password</td>
+                        <tr>
+                            <td>Count</td>
                             <td>
-                                <label for="password" class="sr-only">Password</label>
-                                <input name="password" id="password" type="password" class="sr-only">
+                                <label for="count" class="sr-only">Password</label>
+                                <input name="count" id="count" step="0" type="number" class="form-control">
                             </td>
                         </tr>
                         </tbody>
