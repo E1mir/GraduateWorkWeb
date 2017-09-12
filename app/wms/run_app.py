@@ -18,17 +18,17 @@ if DEBUG:
 
 @app.route("/")
 def index():
-    return redirect("/home")
+    return redirect("/admin/home")
 
 
-@app.route("/home", methods=["GET", "POST"])
+@app.route("/admin/home", methods=["GET", "POST"])
 @login_required
 def home():
     controller = UserController(request)
     return controller.index()
 
 
-@app.route("/accounts", methods=["GET", "POST"])
+@app.route("/admin/accounts", methods=["GET", "POST"])
 @login_required
 def accounts():
     controller = UserController(request)
@@ -59,16 +59,25 @@ def register():
     return controller.register()
 
 
-@app.route("/types")
+@app.route("/admin/types")
+@login_required
 def types():
     controller = UserController(request)
     return controller.types()
 
 
-@app.route("/warehouse")
+@app.route("/admin/warehouse")
+@login_required
 def warehouse():
     controller = UserController(request)
     return controller.warehouse()
+
+
+@app.route("/admin/orders")
+@login_required
+def orders():
+    controller = UserController(request)
+    return controller.orders()
 
 
 @app.route("/add_type", methods=["GET", "POST"])

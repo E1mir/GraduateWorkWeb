@@ -9,23 +9,33 @@
             </div>
             <form action="{{ url_for("add_product") }}" method="post">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="type">Type: </label>
-                        <select name="type" id="type" class="custom-select" required>
-                            <option value="">Select type</option>
-                            {% for type in model.types %}
-                                <option value="{{ type.name }}">{{ type.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" id="price" name="price" step="any" class="form-control">
-                    </div>
+                    <table class="table">
+                        <tr>
+                            <td><label for="name">Name</label></td>
+                            <td><input type="text" class="form-control" id="name" name="name" placeholder="Name"
+                                       required></td>
+                        </tr>
+                        <tr>
+                            <td><label for="type">Type</label></td>
+                            <td>
+                                <select name="type" id="type" class="custom-select" required>
+                                    <option value="">Select type</option>
+                                    {% for type in model.types %}
+                                        <option value="{{ type.name }}">{{ type.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="price">Price</label>
+                            </td>
+                            <td>
+                                <input type="number" id="price" name="price" step="any" class="form-control"
+                                       placeholder="Price">
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>

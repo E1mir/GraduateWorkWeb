@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
-from settings import USER, PASSWORD, SMTP
+from settings import USER, PASSWORD, SMTP, PERMISSIONS
 from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, StorageGoodsModel, WMSAccountsModel, \
     WMSTypesModel, WMSWarehouseModel, encrypt_pass
 from abc import ABCMeta
@@ -111,7 +111,7 @@ class UserController(Controller):
                 login_user(self.user)
                 next_page = self.request.args.get("next")
                 if next_page is None:
-                    return redirect("/home")
+                    return redirect("/admin/home")
                 else:
                     return redirect(next_page)
             else:
@@ -120,12 +120,11 @@ class UserController(Controller):
             return abort(401, "Username or password incorrect!")
 
     def accounts(self):
-        permissions = ["admin", "default"]
         types = self.storage.get_types()
         get_accounts = self.storage.get_all_users()
         model = WMSAccountsModel()
         model.types = types
-        model.permissions = permissions
+        model.permissions = PERMISSIONS
         model.accounts = get_accounts
         return render_template(
             "account/accounts.html",
@@ -159,6 +158,14 @@ class UserController(Controller):
                 "title": "WMS Warehouse"
             },
             model=model
+        )
+
+    def orders(self):
+        return render_template(
+            "account/orders.html",
+            site={
+                "title": "WMS Orders"
+            }
         )
 
     @staticmethod
@@ -261,16 +268,16 @@ class ServiceController(Controller):
         new_type_data = self.get_type_data()
         if new_type_data is None:
             flash("Field is empty!", "alert-danger")
-            return redirect("/types")
+            return redirect("/admin/types")
         status = self.storage.add_new_type(new_type_data)
         if status == "Success":
             flash("Type {} added".format(new_type_data["name"]), "alert-success")
-            return redirect("/types")
+            return redirect("/admin/types")
         if status == "Exist":
             flash("Type {} already exist!".format(new_type_data["name"]), "alert-warning")
-            return redirect("/types")
+            return redirect("/admin/types")
         flash("Something went wrong!", "alert-danger")
-        return redirect("/types")
+        return redirect("/admin/types")
 
     def get_product_data(self):
         product_data = None
@@ -292,25 +299,22 @@ class ServiceController(Controller):
         status = self.storage.add_product(new_product_data)
         if status == "Success":
             flash("{} added!".format(new_product_data["name"]), "alert-success")
-            return redirect("/warehouse")
+            return redirect("/admin/warehouse")
         if status == "Exist":
             flash("Product {} already exist!".format(new_product_data["name"]), "alert-warning")
-            return redirect("/warehouse")
+            return redirect("/admin/warehouse")
         else:
             flash("Something went wrong!", "alert-danger")
-            return redirect("/warehouse")
+            return redirect("/admin/warehouse")
 
     def get_edited_user_data(self):
-        user_data = {}
+        updated_data = {}
         if self.request.method == "POST":
-            user_data["username"] = str(self.request.form["username"]).lower()
-            user_data["email"] = str(self.request.form["email"]).lower()
-            user_data["password"] = str(self.request.form["password"].encode("utf-8"))
-            user_data["type"] = self.request.form["type"]
-            user_data["balance"] = float(self.request.form["balance"])
-            user_data["permission"] = self.request.form["permission"]
-
-        return user_data
+            updated_data["username"] = str(self.request.form["username"]).lower()
+            updated_data["type"] = self.request.form["type"]
+            updated_data["balance"] = float(self.request.form["balance"])
+            updated_data["permission"] = self.request.form["permission"]
+        return updated_data
 
     def edit_account(self, username):
         edited_user = self.get_edited_user_data()
@@ -318,7 +322,7 @@ class ServiceController(Controller):
         model = WMSAccountsModel()
         model.accounts = self.storage.get_all_users()
         model.types = self.storage.get_types()
-        model.permissions = ["admin", "default"]
+        model.permissions = PERMISSIONS
         if status == "edited":
             return render_template(
                 "tables/accounts.table.html",
@@ -330,8 +334,8 @@ class ServiceController(Controller):
     def get_edited_product_data(self):
         product_data = {}
         if self.request.method == "POST":
-            product_data["name"] = self.request.form["name"]
-            product_data["type"] = self.request.form["type"]
+            product_data["name"] = str(self.request.form["name"]).capitalize()
+            product_data["type"] = str(self.request.form["type"]).capitalize()
             product_data["price"] = float(self.request.form["price"])
             if "description" in self.request.form:
                 product_data["description"] = self.request.form["description"]
@@ -353,18 +357,18 @@ class ServiceController(Controller):
         raise Exception("Product not found!")
 
     def get_feedback_data(self):
-        form_data = {
+        feedback_data = {
             "me": USER
         }
         if "userName" in self.request.form:
-            form_data["user_name"] = self.request.form["userName"]
+            feedback_data["user_name"] = self.request.form["userName"]
         if "userEmail" in self.request.form:
-            form_data["sender"] = self.request.form["userEmail"]
+            feedback_data["sender"] = self.request.form["userEmail"]
         if "userMessage" in self.request.form:
-            form_data["message"] = self.request.form["userMessage"]
+            feedback_data["message"] = self.request.form["userMessage"]
         if "userSubject" in self.request.form:
-            form_data["subject"] = self.request.form["userSubject"]
-        return form_data
+            feedback_data["subject"] = self.request.form["userSubject"]
+        return feedback_data
 
     def send_feedback(self):
         message_data = self.get_feedback_data()

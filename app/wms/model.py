@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_login import UserMixin
 import pymongo
-import decimal
-import datetime
 from bson import ObjectId
 from settings import DB_CONNECTION_STRING
 
@@ -72,7 +70,6 @@ class StorageAccountModel(CollectionModel):
         self.balance = None
         self.type = None
         self.permission = None
-        self.password = None
         super(StorageAccountModel, self).__init__(d)
 
 

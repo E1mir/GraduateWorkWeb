@@ -1,12 +1,14 @@
 'use strict';
-// var $initHTML = $("#editAccount");
 var $modal = $(".modal");
 var $ajaxHover = $(".ajax-container");
 
 $ajaxHover.hide();
+//noinspection JSUnresolvedFunction
 $(document).ajaxStart(function () {
     $ajaxHover.show();
 });
+
+//noinspection JSUnresolvedFunction
 $(document).ajaxStop(function () {
     $ajaxHover.hide();
 });
@@ -14,8 +16,7 @@ var $username = $("#username"),
     $email = $("#email"),
     $type = $("select[name='type']"),
     $permission = $("select[name='permission']"),
-    $balance = $("input[name='balance']"),
-    $password = $("input[name='password']");
+    $balance = $("input[name='balance']");
 
 $(document).on("click", "button.edit-account", function () {
     var $parent = $(this).parents().eq(1);
@@ -24,8 +25,7 @@ $(document).on("click", "button.edit-account", function () {
         email = table_data[2].innerText.trim(),
         type = table_data[3].innerText.trim(),
         permission = table_data[4].innerText.trim(),
-        balance = table_data[5].innerText.trim(),
-        password = table_data[6].innerText.trim();
+        balance = table_data[5].innerText.trim();
 
     $username.text(username);
     $email.text(email);
@@ -33,18 +33,15 @@ $(document).on("click", "button.edit-account", function () {
     $type.val(type);
     $permission.val(permission);
     $balance.val(balance);
-    $password.val(password);
 });
 
 $(document).on("click", "button.save-changes", function () {
     var update_object = {};
     var username = $username.text();
     update_object["username"] = username;
-    update_object["email"] = $email.text();
     update_object["type"] = $type.val();
     update_object["permission"] = $permission.val();
     update_object["balance"] = $balance.val();
-    update_object["password"] = $password.val();
     $modal.modal('hide');
     $.ajax({
         method: "POST",

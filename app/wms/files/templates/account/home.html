@@ -2,8 +2,12 @@
 {% block additional_header %}
 {% endblock %}
 {% block content %}
-    <h1>Warehouse Management System</h1>
-    <h3>Welcome {{ user.name }}</h3>
+    {#    #}
+    <div class="welcome">
+        <p class="display-2">Welcome</p>
+        <p class="display-4">to</p>
+        <img class="img-fluid" width="150px" src="{{ url_for("static", filename="img/wms-logo.png") }}">
+    </div>
 {% endblock %}
 {% block scripts %}
 {% endblock %}

@@ -17,8 +17,14 @@
 </head>
 <body>
 <!-- Navigation bar -->
+
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="{{ url_for("index") }}">WMS</a>
+    <a class="navbar-brand navbar-brand-margin" href="{{ url_for("index") }}">WMS</a>
+    <div class="menu_button" id="sidebarToggleButton">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </div>
     <!--
     <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
             data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false"
@@ -27,22 +33,18 @@
     </button>
     -->
 </nav>
+
 <div role="main">
     <div id="mySidenav" class="sidenav">
         <br><br><br>
         <a href="{{ url_for("accounts") }}">Accounts</a>
         <a href="{{ url_for("warehouse") }}">Warehouse</a>
-        <a href="#">Orders</a>
+        <a href="{{ url_for("orders") }}">Orders</a>
         <a href="{{ url_for("types") }}">Types</a>
         <a href="{{ url_for("logout") }}">Log out</a>
     </div>
     <!-- Use any element to open the sidenav -->
-    <div class="container-fluid" id="main">
-        <div class="menu_button" id="sidebarToggleButton">
-            <div class="bar1"></div>
-            <div class="bar2"></div>
-            <div class="bar3"></div>
-        </div>
+    <div class="container" id="main">
         {% block content %}
         {% endblock %}
     </div>
@@ -61,12 +63,12 @@
     $sidebarToggleButton.on("click", function () {
         if (!isSidebarOpen) {
             $sideBar.css("width", "250px");
-            $menuBtn.css("margin-left", "250px");
+            //$menuBtn.css("margin-left", "250px");
             $(this).addClass("change");
             isSidebarOpen = true;
         } else {
             $sideBar.css("width", "0");
-            $menuBtn.css("margin-left", "0");
+            //$menuBtn.css("margin-left", "0");
             $(this).removeClass("change");
             isSidebarOpen = false;
         }

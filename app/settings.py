@@ -5,6 +5,7 @@ USER = "coolproger97@gmail.com"
 PASSWORD = "graduatework2017"
 DB_PASS = "LXlHIUPxo2r18sBv"
 S_KEY = 'ThisIsMyGraduationWork:"WarehouseManagementSystem"'
+PERMISSIONS = ["admin", "default"]
 SMTP = {"HOST": "smtp.gmail.com", "PORT": 587}
 TEMPLATE_FOLDER = "files/templates"
 STATIC_FOLDER = "files/static"
