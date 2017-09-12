@@ -13,7 +13,7 @@ $(document).ajaxStop(function () {
     $ajaxHover.hide();
 });
 var $username = $("#username"),
-    $email = $("#email"),
+    $shop = $("input[name='shopName']"),
     $type = $("select[name='type']"),
     $permission = $("select[name='permission']"),
     $balance = $("input[name='balance']");
@@ -22,13 +22,13 @@ $(document).on("click", "button.edit-account", function () {
     var $parent = $(this).parents().eq(1);
     var table_data = $parent.find("td");
     var username = table_data[1].innerText.trim(),
-        email = table_data[2].innerText.trim(),
-        type = table_data[3].innerText.trim(),
-        permission = table_data[4].innerText.trim(),
-        balance = table_data[5].innerText.trim();
+        shop = table_data[3].innerText.trim(),
+        type = table_data[4].innerText.trim(),
+        permission = table_data[5].innerText.trim(),
+        balance = table_data[6].innerText.trim();
 
     $username.text(username);
-    $email.text(email);
+    $shop.val(shop);
     balance = Number(balance);
     $type.val(type);
     $permission.val(permission);
@@ -42,6 +42,7 @@ $(document).on("click", "button.save-changes", function () {
     update_object["type"] = $type.val();
     update_object["permission"] = $permission.val();
     update_object["balance"] = $balance.val();
+    update_object["shopName"] = $shop.val();
     $modal.modal('hide');
     $.ajax({
         method: "POST",

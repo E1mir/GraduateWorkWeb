@@ -68,6 +68,7 @@ class StorageAccountModel(CollectionModel):
         self.username = None
         self.email = None
         self.balance = None
+        self.shop_name = None
         self.type = None
         self.permission = None
         super(StorageAccountModel, self).__init__(d)

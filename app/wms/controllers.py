@@ -101,7 +101,6 @@ class UserController(Controller):
         if "username" in self.request.form and "password" in self.request.form:
             username = str(self.request.form["username"]).lower()
             password = encrypt_pass(str(self.request.form['password'].encode('utf-8')))
-            print password
             self.user = self.storage.log_in(username, password)
 
     def login(self):
@@ -233,6 +232,8 @@ class ServiceController(Controller):
                 user_data["username"] = str(self.request.form["username"]).lower()
             if "email" in self.request.form:
                 user_data["email"] = str(self.request.form["email"]).lower()
+            if "shopName" in self.request.form:
+                user_data["shop_name"] = str(self.request.form["shopName"]).capitalize()
             if "password" in self.request.form:
                 user_data["password"] = encrypt_pass(str(self.request.form["password"].encode("utf-8")))
             if "type" in self.request.form:
@@ -311,6 +312,7 @@ class ServiceController(Controller):
         updated_data = {}
         if self.request.method == "POST":
             updated_data["username"] = str(self.request.form["username"]).lower()
+            updated_data["shop_name"] = str(self.request.form["shopName"]).capitalize()
             updated_data["type"] = self.request.form["type"]
             updated_data["balance"] = float(self.request.form["balance"])
             updated_data["permission"] = self.request.form["permission"]
