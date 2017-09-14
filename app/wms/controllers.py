@@ -72,6 +72,9 @@ class Storage(object):
             return "Exist"
 
     def edit_product(self, name, updated_product):
+        if name != updated_product["name"]:
+            if self.storage.count_by_query("warehouse", {"name": updated_product["name"]}) == 1:
+                return "Denied"
         self.storage.save("warehouse", {"name": name}, updated_product)
         return "Edited"
 
@@ -356,7 +359,8 @@ class ServiceController(Controller):
                 "tables/warehouse.table.html",
                 model=model
             )
-        raise Exception("Product not found!")
+        else:
+            return "Product name should be same or unique!!"
 
     def get_feedback_data(self):
         feedback_data = {

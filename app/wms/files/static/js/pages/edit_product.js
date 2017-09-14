@@ -44,13 +44,23 @@ $(document).on("click", "button.save-changes", function () {
         url: "/goods/edit/" + id_name,
         data: update_object,
         success: function (response) {
-            $(".table-responsive").html(response);
-            swal({
-                title: "Product edited!",
-                text: "",
-                type: "success",
-                confirmButtonText: "Ok"
-            });
+            if (response != "Product name should be same or unique!!") {
+                $(".table-responsive").html(response);
+                swal({
+                    title: "Product edited!",
+                    text: "",
+                    type: "success",
+                    confirmButtonText: "Ok"
+                });
+            } else {
+                swal({
+                    title: "Error",
+                    text: response,
+                    type: "error",
+                    confirmButtonColor: "#000",
+                    confirmButtonText: "Ok!"
+                });
+            }
         },
         error: function (error) {
             swal({
