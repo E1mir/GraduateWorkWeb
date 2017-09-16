@@ -345,7 +345,7 @@ class ServiceController(Controller):
             if "description" in self.request.form:
                 product_data["description"] = self.request.form["description"]
             if "count" in self.request.form:
-                product_data["count"] = self.request.form["count"]
+                product_data["count"] = int(self.request.form["count"])
         return product_data
 
     def edit_product(self, name):

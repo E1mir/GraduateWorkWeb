@@ -19,7 +19,6 @@
     <br>
     <div class="form-centered">
         <h1 class="text-center">WMS Register</h1>
-        <br>
         {% include "layout.alert.html" %}
         <form action="{{ url_for("register") }}" method="post">
             <div class="form-group">
@@ -58,6 +57,5 @@
 <script src="{{ url_for("static", filename="js/jquery.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
-
 </body>
 </html>
