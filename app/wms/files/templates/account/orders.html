@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block additional_header %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/sweetalert.css") }}">
 {% endblock %}
 {% block content %}
     <br>
@@ -7,6 +8,12 @@
     <div class="table-responsive">
         {% include "tables/orders.table.html" %}
     </div>
+    {% include "modals/modal.info.order.html" %}
+    <div class="ajax-container">
+        <div class="loader"></div>
+    </div>
 {% endblock %}
 {% block scripts %}
+    <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/pages/order_script.js") }}"></script>
 {% endblock %}

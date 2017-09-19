@@ -98,6 +98,12 @@ def account_edit(username):
     return controller.edit_account(username)
 
 
+@app.route("/order_confirmation/<int:order_id>", methods=["GET", "POST"])
+def order_confirmation(order_id):
+    controller = ServiceController(request)
+    return controller.order_confirmation(order_id)
+
+
 @app.route("/goods/edit/<string:name>", methods=["GET", "POST"])
 def product_edit(name):
     controller = ServiceController(request)

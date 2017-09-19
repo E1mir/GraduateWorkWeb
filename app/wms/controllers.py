@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, redirect, flash, abort
 from flask_login import logout_user, login_user
+import ast
 from settings import USER, PASSWORD, SMTP, PERMISSIONS
-from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, StorageGoodsModel, WMSAccountsModel, \
-    WMSTypesModel, WMSWarehouseModel, encrypt_pass
+from model import User, DatabaseConnector, StorageAccountModel, StorageTypeModel, StorageGoodsModel, \
+    StorageOrderModel, WMSAccountsModel, WMSTypesModel, WMSWarehouseModel, WMSOrdersModel, encrypt_pass
 from abc import ABCMeta
 import smtplib
 from email.mime.text import MIMEText
@@ -77,6 +78,27 @@ class Storage(object):
                 return "Denied"
         self.storage.save("warehouse", {"name": name}, updated_product)
         return "Edited"
+
+    def get_orders(self):
+        orders = self.storage.collection("orders").find({}).sort("order_id", -1)
+        for order in orders:
+            yield StorageOrderModel(order)
+
+    def confirm_order(self, order_id, confirm_data):
+        if confirm_data["status"] == 'Accepted':
+            self.storage.save("orders", {"order_id": order_id}, confirm_data)
+        else:
+            self.storage.save("orders", {"order_id": order_id},
+                              {
+                                  "status": confirm_data["status"],
+                                  "confirm_timestamp": confirm_data["confirm_timestamp"]
+                              })
+            account = self.storage.collection("accounts").find_one({"username": confirm_data["username"]})
+            initial_balance = account["balance"] + confirm_data["total_cost"]
+            self.storage.save("accounts", {"username": confirm_data["username"]}, {"balance": initial_balance})
+            for product in confirm_data["products"]:
+                self.storage.save("warehouse", {"name": product["name"]}, {"count": product["count"]})
+            return "Declined"
 
 
 class Controller(object):
@@ -163,11 +185,15 @@ class UserController(Controller):
         )
 
     def orders(self):
+        model = WMSOrdersModel()
+        orders = self.storage.get_orders()
+        model.orders = orders
         return render_template(
             "account/orders.html",
             site={
                 "title": "WMS Orders"
-            }
+            },
+            model=model
         )
 
     @staticmethod
@@ -361,6 +387,31 @@ class ServiceController(Controller):
             )
         else:
             return "Product name should be same or unique!!"
+
+    def get_confirmation_data(self):
+        order_data = {}
+        if self.request.method == "POST":
+            if 'status' in self.request.form:
+                order_data["status"] = self.request.form['status']
+                if self.request.form['status'] == 'Declined':
+                    order_data['products'] = ast.literal_eval(self.request.form['products'])
+                    order_data['username'] = self.request.form['username']
+                    order_data['total_cost'] = float(self.request.form['total_cost'])
+            if 'timestamp' in self.request.form:
+                order_data['confirm_timestamp'] = int(self.request.form['timestamp'])
+
+        return order_data
+
+    def order_confirmation(self, order_id):
+        order_data = self.get_confirmation_data()
+        self.storage.confirm_order(order_id, order_data)
+        model = WMSOrdersModel()
+        orders = self.storage.get_orders()
+        model.orders = orders
+        return render_template(
+            "tables/orders.table.html",
+            model=model
+        )
 
     def get_feedback_data(self):
         feedback_data = {

@@ -4,42 +4,57 @@
         <th>№</th>
         <th>Id</th>
         <th>Account</th>
-        <th>Delivery cost</th>
+        <th>Total cost</th>
         <th>Date</th>
-        <th>Status</th>
+        <th class="table-text-center">Status</th>
         <th>Order</th>
         <th>Confirmation</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>1</td>
-        <td>1583919502</td>
-        <td>kryternext</td>
-        <td>1524</td>
-        <td>12.09.2017 17:19</td>
-        <td>Accepted at 13.09.2017 12:15</td>
-        <td>
-            <button class="btn btn-info">Order info</button>
-        </td>
-        <td class="sr-only"></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td>1583452502</td>
-        <td>kukuwka97</td>
-        <td>2512</td>
-        <td>12.09.2017 17:43</td>
-        <td class="text-center">
-            Waiting confirmation
-        </td>
-        <td>
-            <button class="btn btn-info">Order info</button>
-        </td>
-        <td>
-            <a href="#" class="btn btn-sm btn-success">Accept</a>
-            <a href="#" class="btn btn-sm btn-danger">Reject</a>
-        </td>
-    </tr>
+    {% for order in model.orders %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ order.order_id }}</td>
+            <td>{{ order.account }}</td>
+            <td>{{ order.total_cost }}</td>
+            <td>{{ order.date }}</td>
+            <td class="table-text-center">
+                {% if order.confirm_date %}
+                    {{ order.status }} at {{ order.confirm_date }}
+                {% else %}
+                    {{ order.status }}
+                {% endif %}
+            </td>
+            <td class="table-text-center">
+                <div class="sr-only">
+                    {% for product in order.order %}
+                        <button class="btn btn-sm">
+                            <span class="product-name">{{ product.name }}</span>
+                            <span class="badge badge-secondary count-info">{{ product.count }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-info order-info " data-toggle="modal" data-target="#orderInfo">
+                    Order info
+                </button>
+            </td>
+            {% if order.status=="Awaiting confirmation" %}
+                <td class="table-text-center">
+                    <button class="btn btn-success btn-sm btn-accept">Accept</button>
+                    &nbsp;
+                    <button class="btn badge-danger btn-sm btn-decline">Decline</button>
+                </td>
+            {% elif order.status=="Accepted" %}
+                <td class="table-text-center">
+                    <button class="btn btn-success btn-sm" disabled>Confirmed</button>
+                </td>
+            {% elif order.status=="Declined" %}
+                <td class="table-text-center">
+                    <button class="btn btn-danger btn-sm" disabled>Declined</button>
+                </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
     </tbody>
 </table>

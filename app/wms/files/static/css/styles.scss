@@ -15,7 +15,7 @@ h1 {
   /* 100% Full-height */
   width: 0;
   /* 0 width - change this with JavaScript */
-  position: absolute;
+  position: fixed;
   /* Stay in place */
   z-index: 1;
   /* Stay on top */
@@ -124,7 +124,7 @@ h1 {
   margin: 0;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
@@ -199,4 +199,9 @@ input[type="number"] {
   transform: translate(-50%, -50%);
   text-align: center;
   text-decoration: none;
+}
+
+.table-text-center {
+  text-align: center;
+  vertical-align: middle;
 }

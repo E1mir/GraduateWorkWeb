@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_login import UserMixin
 import pymongo
+import datetime
 from bson import ObjectId
 from settings import DB_CONNECTION_STRING
 
@@ -90,6 +91,25 @@ class StorageGoodsModel(CollectionModel):
         super(StorageGoodsModel, self).__init__(d)
 
 
+class StorageOrderModel(CollectionModel):
+    def __init__(self, d):
+        self.order_id = None
+        self.account = None
+        self.total_cost = None
+        self.date = None
+        self.status = None
+        self.order = None
+        self.confirm_timestamp = None
+        super(StorageOrderModel, self).__init__(d)
+        self.confirm_date = self.get_confirm_date(self.confirm_timestamp)
+
+    @staticmethod
+    def get_confirm_date(timestamp):
+        if timestamp != 0:
+            return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%d-%m-%Y %H:%M:%S')
+        return ""
+
+
 class WMSAccountsModel(object):
     def __init__(self):
         self.types = None
@@ -106,6 +126,11 @@ class WMSWarehouseModel(object):
     def __init__(self):
         self.warehouse = None
         self.types = None
+
+
+class WMSOrdersModel(object):
+    def __init__(self):
+        self.orders = None
 
 
 ''' Very simple encryption functions'''
