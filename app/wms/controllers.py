@@ -398,7 +398,7 @@ class ServiceController(Controller):
                     order_data['username'] = self.request.form['username']
                     order_data['total_cost'] = float(self.request.form['total_cost'])
             if 'timestamp' in self.request.form:
-                order_data['confirm_timestamp'] = int(self.request.form['timestamp'])
+                order_data['confirm_timestamp'] = long(self.request.form['timestamp'])
 
         return order_data
 

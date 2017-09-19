@@ -106,7 +106,7 @@ class StorageOrderModel(CollectionModel):
     @staticmethod
     def get_confirm_date(timestamp):
         if timestamp != 0:
-            return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%d-%m-%Y %H:%M:%S')
+            return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%d-%m-%Y %HH:%MM:%SS')
         return ""
 
 
