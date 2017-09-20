@@ -3,6 +3,8 @@
     <tr>
         <th>№</th>
         <th>Name</th>
+        <th>Categories</th>
+        <th>Operations</th>
     </tr>
     </thead>
     <tbody>
@@ -10,6 +12,10 @@
         <tr>
             <td>{{ loop.index }}</td>
             <td>{{ type.name }}</td>
+            <td>{{ type.categories }}</td>
+            <td>
+                <button class="btn btn-primary edit-type" data-toggle="modal" data-target="#editType">Edit</button>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

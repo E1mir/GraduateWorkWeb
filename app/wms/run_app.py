@@ -86,6 +86,12 @@ def add_type():
     return controller.add_type()
 
 
+@app.route("/types/edit/<string:name>", methods=["GET", "POST"])
+def type_edit(name):
+    controller = ServiceController(request)
+    return controller.edit_type(name)
+
+
 @app.route("/add_product", methods=["POST", "POST"])
 def add_product():
     controller = ServiceController(request)

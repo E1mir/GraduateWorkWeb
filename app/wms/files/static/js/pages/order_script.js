@@ -60,7 +60,7 @@ $(document).on("click", "button.btn-decline", function () {
     var decline = {};
     var tableData = $parent.find("td");
     var orderID = Number(tableData[1].innerText);
-    var totalCost = Number(tableData[3].innerText);
+    var totalCost = Number(tableData[3].innerText.replace(" $",""));
     var username = tableData[2].innerText;
     var timeStamp = Math.floor(Date.now() / 1000) + 14400;
     var productNames = $parent.find(".product-name");

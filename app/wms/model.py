@@ -78,13 +78,23 @@ class StorageAccountModel(CollectionModel):
 class StorageTypeModel(CollectionModel):
     def __init__(self, d):
         self.name = None
+        self.categories = None
         super(StorageTypeModel, self).__init__(d)
+        self.categories_array = self._get_categories_array(self.categories)
+
+    @staticmethod
+    def _get_categories_array(categories):
+        categories = categories.split(',')
+        for i in range(len(categories)):
+            categories[i] = categories[i].strip()
+        return categories
 
 
 class StorageGoodsModel(CollectionModel):
     def __init__(self, d):
         self.name = None
         self.type = None
+        self.category = None
         self.price = None
         self.description = None
         self.count = None
@@ -121,6 +131,7 @@ class WMSAccountsModel(object):
 class WMSTypesModel(object):
     def __init__(self):
         self.types = None
+        self.categories = None
 
 
 class WMSWarehouseModel(object):

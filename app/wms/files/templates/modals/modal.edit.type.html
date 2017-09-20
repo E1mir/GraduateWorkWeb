@@ -1,0 +1,46 @@
+<div class="modal fade" id="editType">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label for="editName">Name</label>
+                            </td>
+                            <td>
+                                <input type="text" id="editName" name="name" class="form-control" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="categories">Categories</label></td>
+                            <td>
+                                <textarea name="categories" id="categories" class="form-control" cols="30" rows="5"
+                                          placeholder="Separate by comma! Ex.: Motherboard, Video card, etc."></textarea>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary save-type">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

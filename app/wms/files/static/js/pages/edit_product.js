@@ -1,7 +1,8 @@
 'use strict';
-var $modal = $(".modal"),
+var $modal = $("#editProduct"),
     $name = $("#editName"),
     $type = $("#editType"),
+    $category = $("#category"),
     $description = $("#description"),
     $price = $("#editPrice"),
     $count = $("#count"),
@@ -16,16 +17,18 @@ $(document).ajaxStop(function () {
     $ajaxHover.hide();
 });
 $(document).on("click", "button.edit-product", function () {
-    var $parent = $(this).parents().eq(1);
+    var $parent = $(this).parent().parent();
     var table_data = $parent.find("td");
+    var description = $parent.find("div.sr-only").text();
     var name = table_data[1].innerText.trim(),
         type = table_data[2].innerText.trim(),
-        description = table_data[3].innerText.trim(),
-        price = table_data[4].innerText.trim(),
-        count = table_data[5].innerText.trim();
+        category = table_data[3].innerText.trim(),
+        price = table_data[5].innerText.trim(),
+        count = table_data[6].innerText.trim();
     id_name = name;
     $name.val(name);
     $type.val(type);
+    $category.val(category);
     $description.val(description);
     $price.val(price);
     $count.val(count);
@@ -35,6 +38,7 @@ $(document).on("click", "button.save-changes", function () {
     var update_object = {};
     update_object["name"] = $name.val();
     update_object["type"] = $type.val();
+    update_object["category"] = $category.val();
     update_object["description"] = $description.val();
     update_object["price"] = $price.val();
     update_object["count"] = $count.val();

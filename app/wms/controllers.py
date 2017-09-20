@@ -60,6 +60,13 @@ class Storage(object):
         else:
             return "Exist"
 
+    def edit_type(self, name, updated_type):
+        if name != updated_type["name"]:
+            if self.storage.count_by_query("types", {"name": updated_type["name"]}) == 1:
+                return "Denied"
+        self.storage.save("types", {"name": name}, updated_type)
+        return "Edited"
+
     def get_goods(self):
         goods = self.storage.collection("warehouse").find({}).sort("type", 1)
         for product in goods:
@@ -309,6 +316,28 @@ class ServiceController(Controller):
         flash("Something went wrong!", "alert-danger")
         return redirect("/admin/types")
 
+    def get_edited_type_data(self):
+        type_data = {}
+        if self.request.method == "POST":
+            type_data["name"] = self.request.form["name"]
+            if "categories" in self.request.form:
+                type_data["categories"] = self.request.form["categories"]
+                print type_data['categories']
+        return type_data
+
+    def edit_type(self, name):
+        type_data = self.get_edited_type_data()
+        status = self.storage.edit_type(name, type_data)
+        model = WMSTypesModel()
+        model.types = self.storage.get_types()
+        if status == "Edited":
+            return render_template(
+                "tables/types.table.html",
+                model=model
+            )
+        else:
+            return "Type name should be same or unique!!"
+
     def get_product_data(self):
         product_data = None
         if self.request.method == "POST":
@@ -370,6 +399,8 @@ class ServiceController(Controller):
             product_data["price"] = float(self.request.form["price"])
             if "description" in self.request.form:
                 product_data["description"] = self.request.form["description"]
+            if "category" in self.request.form:
+                product_data["category"] = self.request.form["category"]
             if "count" in self.request.form:
                 product_data["count"] = int(self.request.form["count"])
         return product_data

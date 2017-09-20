@@ -4,6 +4,7 @@
         <th>№</th>
         <th>Name</th>
         <th>Type</th>
+        <th>Category</th>
         <th>Description</th>
         <th>Price</th>
         <th>Count</th>
@@ -17,7 +18,13 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.type }}</td>
-                <td>{{ product.description }}</td>
+                <td>{{ product.category }}</td>
+                <td class="table-text-center">
+                    <div class="sr-only">{{ product.description }}</div>
+                    <button class="btn btn-secondary btn-sm show-description"
+                            data-toggle="modal" data-target="#showDescription">Show description
+                    </button>
+                </td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.count }}</td>
                 <td>

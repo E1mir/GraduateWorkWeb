@@ -19,8 +19,10 @@
     </div>
     {% include "modals/modal.add.product.html" %}
     {% include "modals/modal.edit.product.html" %}
+    {% include "modals/modal.description.product.html" %}
 {% endblock %}
 {% block scripts %}
     <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
     <script src="{{ url_for("static", filename="js/pages/edit_product.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/pages/show_description.js") }}"></script>
 {% endblock %}

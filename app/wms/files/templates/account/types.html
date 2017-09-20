@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block additional_header %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/sweetalert.css") }}">
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -8,37 +9,18 @@
             <button class="btn btn-info round-button float-right" data-toggle="modal"
                     data-target="#addType">&plus;</button>
         </h1>
-        <div class="row">
-            <div class="col"></div>
-            <div class="table-responsive col-6">
-                {% include "layout.alert.html" %}
-                {% include "tables/types.table.html" %}
-            </div>
-            <div class="col"></div>
+        {% include "layout.alert.html" %}
+        <div class="table-responsive">
+            {% include "tables/types.table.html" %}
+        </div>
+        <div class="ajax-container">
+            <div class="loader"></div>
         </div>
     </div>
-    <div class="modal fade" id="addType">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add type</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ url_for("add_type") }}" method="post">
-                    <div class="modal-body">
-                        <label for="name">Type name:</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {% include "modals/modal.add.type.html" %}
+    {% include "modals/modal.edit.type.html" %}
 {% endblock %}
 {% block scripts %}
+    <script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/pages/edit_type.js") }}"></script>
 {% endblock %}

@@ -1,5 +1,5 @@
 <div class="modal fade" id="editProduct">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit product</h5>
@@ -36,11 +36,25 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>Type</td>
+                            <td>
+                                <label for="category" class="sr-only"></label>
+                                <select name="category" id="category" class="custom-select">
+                                    <option value="">Select category</option>
+                                    {% for type in model.types %}
+                                        {% for category in type.categories_array %}
+                                            <option value="{{ category }}">{{ category }}</option>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Description</td>
                             <td>
                                 <label for="description" class="sr-only">Permission</label>
                                 <textarea name="description" class="form-control" id="description" cols="30"
-                                          rows="3"></textarea>
+                                          rows="5"></textarea>
                             </td>
                         </tr>
                         <tr>
