@@ -101,12 +101,13 @@ class StorageOrderModel(CollectionModel):
         self.order = None
         self.confirm_timestamp = None
         super(StorageOrderModel, self).__init__(d)
+        self.date = self.get_confirm_date(self.order_id)
         self.confirm_date = self.get_confirm_date(self.confirm_timestamp)
 
     @staticmethod
     def get_confirm_date(timestamp):
         if timestamp != 0:
-            return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%d-%m-%Y %HH:%MM:%SS')
+            return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%d-%m-%Y %H:%M:%S')
         return ""
 
 
